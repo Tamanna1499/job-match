@@ -9,6 +9,7 @@ export const TEST_DATABASE_ENV = {
   PGDATABASE: 'jobmatch_test',
   PGUSER: 'jobmatch_test',
   PGPASSWORD: 'jobmatch-test-local',
+  APP_PORT: '3108',
 } as const;
 
 export function assertTestDatabase(database: {

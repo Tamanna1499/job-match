@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import type { Database } from '../db/client.js';
 import { candidates, jobRequiredSkills, jobs } from '../db/schema.js';
 import type { Candidate, Job, NewCandidate, NewJob, RequiredSkill } from '../domain/types.js';
@@ -61,6 +61,16 @@ function groupSkills(rows: readonly SkillRow[]): Map<string, RequiredSkill[]> {
 
 export function createRepositories(database: Database): Repositories {
   return {
+    health: {
+      async check(): Promise<boolean> {
+        try {
+          await database.execute(sql`select 1`);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    },
     candidates: {
       async create(candidate: NewCandidate): Promise<Candidate> {
         const row: CandidateRow = {
@@ -76,7 +86,11 @@ export function createRepositories(database: Database): Repositories {
       },
 
       async findById(id: string): Promise<Candidate | undefined> {
-        const found = await database.select().from(candidates).where(eq(candidates.id, id)).limit(1);
+        const found = await database
+          .select()
+          .from(candidates)
+          .where(eq(candidates.id, id))
+          .limit(1);
         const row = found[0];
         return row === undefined ? undefined : toCandidate(row);
       },

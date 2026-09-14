@@ -321,6 +321,27 @@ The integration suite also queries PostgreSQL's actual database, port and data d
 
 ---
 
+### D30 · Startup owns the HTTP and database lifecycle
+The API listens on `127.0.0.1:3107` by default, only after the embedded cluster starts,
+the application database exists, and migrations finish. Boot validates ports, SQL names,
+the password's presence, and that the database directory resolves inside the project.
+Connections and statements have five-second timeouts. If migrations or HTTP binding fail,
+startup closes the pool and cluster. The health route queries PostgreSQL through a
+repository contract, returning 503 if it cannot answer.
+
+`embedded-postgres` also installs an `async-exit-hook` SIGTERM handler that forces exit code
+143. A compiled-server smoke test found that this raced the API's own shutdown. The CLI
+entry point removes that library handler for SIGINT and SIGTERM, then drains Fastify,
+closes the pool, and stops PostgreSQL itself. The dependency was made direct because the
+CLI now relies on its public `unhookEvent` API. The same smoke test then served `/health`
+and exited with code 0 on SIGTERM.
+
+An `.npmrc` sends npm's cache and logs to the project-local, ignored `.npm-cache`.
+PostgreSQL's default temporary files and Unix sockets remain outside the project; full
+filesystem containment is still unfinished.
+
+---
+
 ## How AI tools were used
 
 The README requires specifics on this, including where suggestions were overridden. This
@@ -330,6 +351,9 @@ section is the source for it, written as the work happens rather than reconstruc
   storage layer, tests, and these documents.
 - **Codex** implemented the integration database isolation in D29, added regression tests,
   and checked that the guard rejects development settings before startup.
+- **Codex** implemented the startup lifecycle in D30. Its initial signal handler passed
+  endpoint tests but failed the compiled-server smoke test with exit code 143; inspecting
+  the dependency's exit hook led to the revised shutdown ownership above.
 - **The scoring model is the author's own**, specified in writing before any
   implementation. The assistant had drafted an alternative; it was compared against the
   author's and the author's was kept — D7 is the clearest case, where the assistant's

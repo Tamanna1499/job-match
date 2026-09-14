@@ -30,7 +30,13 @@ function connectionString(databaseName: string): string {
  * has no `IF NOT EXISTS`, hence the check-then-create.
  */
 async function ensureDatabaseExists(logger: Logger): Promise<void> {
-  const admin = new Pool({ connectionString: connectionString('postgres'), max: 1 });
+  const admin = new Pool({
+    connectionString: connectionString('postgres'),
+    max: 1,
+    connectionTimeoutMillis: 5_000,
+    statement_timeout: 5_000,
+    query_timeout: 5_000,
+  });
   admin.on('error', (error) => {
     logger.error(`admin pool error: ${error.message}`);
   });
@@ -52,7 +58,12 @@ export async function connect(logger: Logger): Promise<Database> {
 
   await ensureDatabaseExists(logger);
 
-  const created = new Pool({ connectionString: connectionString(DATABASE.database) });
+  const created = new Pool({
+    connectionString: connectionString(DATABASE.database),
+    connectionTimeoutMillis: 5_000,
+    statement_timeout: 5_000,
+    query_timeout: 5_000,
+  });
 
   /**
    * An idle client that dies — a cluster restart, a dropped socket — emits `error` on the
@@ -67,7 +78,12 @@ export async function connect(logger: Logger): Promise<Database> {
   });
 
   const instance = drizzle(created, { schema });
-  await migrate(instance, { migrationsFolder: './drizzle' });
+  try {
+    await migrate(instance, { migrationsFolder: './drizzle' });
+  } catch (error: unknown) {
+    await created.end();
+    throw error;
+  }
 
   pool = created;
   database = instance;

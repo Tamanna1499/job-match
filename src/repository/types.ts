@@ -3,7 +3,7 @@ import type { Candidate, Job, NewCandidate, NewJob } from '../domain/types.js';
 /**
  * Storage, stated as an interface the rest of the application can depend on.
  *
- * The routes are written against these two types and never against Drizzle, so swapping
+ * The routes are written against these contracts and never against Drizzle, so swapping
  * the implementation — for an in-memory one, or a different database — touches this
  * directory and nowhere else. `scoring/` depends on neither: it is handed a candidate and
  * a list of jobs and has no idea where they came from.
@@ -32,4 +32,9 @@ export interface JobRepository {
 export interface Repositories {
   readonly candidates: CandidateRepository;
   readonly jobs: JobRepository;
+  readonly health: HealthRepository;
+}
+
+export interface HealthRepository {
+  check(): Promise<boolean>;
 }
