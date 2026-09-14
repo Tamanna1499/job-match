@@ -342,6 +342,28 @@ filesystem containment is still unfinished.
 
 ---
 
+### D31 · The API validates at the boundary and bounds recommendation responses
+
+The three routes use strict Zod schemas through Fastify's validator compiler. Unknown
+fields, invalid values, and malformed query limits return the same `400` error shape.
+Creation returns the stored record with a server-generated id. An unknown candidate is a
+typed `404`; a known candidate with no eligible jobs gets `200` and an empty array.
+
+The optional recommendation limit defaults to 10 and accepts 1–100. This bounds the
+response, although the current repository still reads every job before scoring; that is
+acceptable at the assignment's scale and would need pagination or database-side filtering
+for a large catalogue. Required skills are unique after normalisation, so two spellings
+of the same skill cannot produce contradictory `mustHave` flags or a storage error.
+
+The route for recommendations delegates candidate lookup and ranking to a service; the
+creation routes call their repositories directly because they have no domain operation
+beyond validated persistence. A pass-through service for each write would add a layer
+without behaviour. The API integration suite runs against PostgreSQL. Its ranking test
+was checked by temporarily returning an empty array from the service: the test failed,
+and the implementation was restored.
+
+---
+
 ## How AI tools were used
 
 The README requires specifics on this, including where suggestions were overridden. This
@@ -354,6 +376,9 @@ section is the source for it, written as the work happens rather than reconstruc
 - **Codex** implemented the startup lifecycle in D30. Its initial signal handler passed
   endpoint tests but failed the compiled-server smoke test with exit code 143; inspecting
   the dependency's exit hook led to the revised shutdown ownership above.
+- **Codex** implemented the three API routes, boundary validation, error mapping, and
+  PostgreSQL-backed endpoint tests in D31. The ranking test was mutation-checked against
+  an empty service result before the correct implementation was restored.
 - **The scoring model is the author's own**, specified in writing before any
   implementation. The assistant had drafted an alternative; it was compared against the
   author's and the author's was kept — D7 is the clearest case, where the assistant's

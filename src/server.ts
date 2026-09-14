@@ -24,7 +24,7 @@ export async function startServer(): Promise<RunningServer> {
     const database = await connect({
       error: (message) => app?.log.error(message),
     });
-    const runningApp = createApp(createRepositories(database).health);
+    const runningApp = createApp(createRepositories(database));
     app = runningApp;
     await runningApp.listen({ port: config.port, host: config.host });
 

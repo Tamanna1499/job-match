@@ -1,12 +1,12 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { connect, disconnect } from '../../src/db/client.js';
 import { startCluster, stopCluster } from '../../src/db/cluster.js';
-import { candidates, jobRequiredSkills, jobs } from '../../src/db/schema.js';
 import type { Repositories } from '../../src/repository/types.js';
 import { createRepositories } from '../../src/repository/postgres.js';
 import type { Database } from '../../src/db/client.js';
 import { DATABASE } from '../../src/config/database.js';
 import { assertTestDatabase, TEST_DATABASE_ENV } from '../support/database.js';
+import { clearTestTables } from '../support/clear-database.js';
 
 /**
  * These run against real PostgreSQL, not a stub.
@@ -32,9 +32,7 @@ beforeAll(async () => {
 afterEach(async () => {
   // A refused target or failed startup must never reach destructive cleanup.
   if (database === undefined) return;
-  await database.delete(jobRequiredSkills);
-  await database.delete(jobs);
-  await database.delete(candidates);
+  await clearTestTables(database);
 });
 
 afterAll(async () => {

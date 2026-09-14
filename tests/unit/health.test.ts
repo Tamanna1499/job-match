@@ -3,7 +3,11 @@ import { createApp } from '../../src/api/app.js';
 
 describe('health endpoint', () => {
   it('returns 503 when the database cannot answer', async () => {
-    const app = createApp({ check: vi.fn().mockResolvedValue(false) });
+    const app = createApp({
+      health: { check: vi.fn().mockResolvedValue(false) },
+      candidates: { create: vi.fn(), findById: vi.fn() },
+      jobs: { create: vi.fn(), findAll: vi.fn() },
+    });
 
     try {
       const response = await app.inject({ method: 'GET', url: '/health' });
