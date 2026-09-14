@@ -364,6 +364,18 @@ and the implementation was restored.
 
 ---
 
+### D32 · The seed command adds a small, non-destructive demonstration dataset
+
+`npm run db:seed` creates two candidates and three jobs through the repository layer, then
+prints each candidate's ranked matches and score breakdown. The examples cover a perfect
+match, a missing must-have, a short experience history, and a salary cap below expectation.
+It adds a fresh set on each run rather than deleting existing development data, so running
+the command cannot erase records created during manual API testing. The output ranks only
+the records created by that invocation, which keeps the demonstration readable even when
+the database already contains other data.
+
+---
+
 ## How AI tools were used
 
 The README requires specifics on this, including where suggestions were overridden. This
@@ -379,6 +391,8 @@ section is the source for it, written as the work happens rather than reconstruc
 - **Codex** implemented the three API routes, boundary validation, error mapping, and
   PostgreSQL-backed endpoint tests in D31. The ranking test was mutation-checked against
   an empty service result before the correct implementation was restored.
+- **Codex** implemented the repository-backed seed command in D32 and ran it against the
+  real embedded database to inspect the printed score breakdowns.
 - **The scoring model is the author's own**, specified in writing before any
   implementation. The assistant had drafted an alternative; it was compared against the
   author's and the author's was kept — D7 is the clearest case, where the assistant's

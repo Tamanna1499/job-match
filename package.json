@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "verify": "npm run typecheck && npm run lint && npm run boundaries && npm test && npm run test:integration",
     "db:generate": "drizzle-kit generate",
+    "db:seed": "tsx scripts/db-seed.ts",
     "db:console": "tsx scripts/db-console.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts"
   },
