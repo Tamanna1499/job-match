@@ -56,8 +56,8 @@ export async function connect(logger: Logger): Promise<Database> {
 
   /**
    * An idle client that dies — a cluster restart, a dropped socket — emits `error` on the
-   * pool. Without a listener Node treats that as unhandled and takes the process down,
-   * which is how the previous project died in the middle of an unrelated request.
+   * pool. Without a listener Node treats that as unhandled and takes the whole process
+   * down, in the middle of whatever unrelated request happened to be in flight.
    *
    * Only the message is logged. Logging the error object itself prints the whole
    * connection configuration, password included.

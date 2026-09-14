@@ -1,10 +1,10 @@
 /**
  * Every number the scorer uses, named and in one place.
  *
- * Specified in Scoring-logic.md, which is authoritative. Keeping them here means no
- * numeric literal appears in scoring/ that a reader would have to interpret, and it makes
- * the "configurable weights" bonus a matter of passing a different object rather than a
- * rewrite.
+ * These are the scoring model itself, not an implementation detail of it — the reasoning
+ * behind every number is in the README. Keeping them here means no numeric literal appears
+ * in scoring/ that a reader would have to interpret, and it makes the "configurable
+ * weights" bonus a matter of passing a different object rather than a rewrite.
  */
 export const DIMENSION_MAX = {
   skills: 50,

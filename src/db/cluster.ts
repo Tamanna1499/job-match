@@ -9,14 +9,14 @@ import { DATABASE } from '../config/database.js';
  * Real Postgres means real SQL, real constraints and real migrations, while setup stays
  * `npm install && npm start` with nothing installed on the host.
  *
- * Two failures from the previous project are pre-empted here, because both cost an
- * afternoon before they were understood:
+ * Two details of `embedded-postgres` are handled explicitly, because neither announces
+ * itself when it goes wrong:
  *
- * 1. `initdb` refuses to run over an existing cluster, so a plain restart failed. Every
- *    run during development happened to follow a delete, which hid it. `initialise()` is
- *    now called only when the data directory has no cluster in it.
- * 2. A start failure surfaced as an empty error, because Postgres reports what went wrong
- *    on its own stderr rather than through the rejected promise. That output is captured
+ * 1. `initdb` refuses to run over an existing cluster, so calling it unconditionally means
+ *    the first run works and every restart fails. `initialise()` is called only when the
+ *    data directory has no cluster in it.
+ * 2. Postgres reports why it would not start on its own stderr, not through the rejected
+ *    promise, so a failure otherwise surfaces as an empty error. That output is captured
  *    and attached to the error thrown here.
  */
 

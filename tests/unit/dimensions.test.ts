@@ -91,7 +91,7 @@ describe('location — 25 points', () => {
 });
 
 describe('salary — 15 points', () => {
-  /** The ten worked examples from Scoring-logic.md, at an expectation of ₹12 LPA. */
+  /** The ten worked examples that define the salary rule, at an expectation of ₹12 LPA. */
   const vectors: readonly [number, number, number][] = [
     [5, 8, 3],
     [8, 10, 3],
