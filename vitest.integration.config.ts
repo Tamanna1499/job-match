@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { TEST_DATABASE_ENV } from './tests/support/database.js';
 
 /**
  * Integration tests run against a real embedded PostgreSQL cluster.
@@ -14,6 +15,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['tests/integration/**/*.test.ts'],
+    env: TEST_DATABASE_ENV,
     fileParallelism: false,
     testTimeout: 30_000,
     hookTimeout: 120_000,

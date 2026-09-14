@@ -5,6 +5,8 @@ import { candidates, jobRequiredSkills, jobs } from '../../src/db/schema.js';
 import type { Repositories } from '../../src/repository/types.js';
 import { createRepositories } from '../../src/repository/postgres.js';
 import type { Database } from '../../src/db/client.js';
+import { DATABASE } from '../../src/config/database.js';
+import { assertTestDatabase, TEST_DATABASE_ENV } from '../support/database.js';
 
 /**
  * These run against real PostgreSQL, not a stub.
@@ -21,12 +23,15 @@ let repositories: Repositories;
 const silent = { error: (): void => undefined };
 
 beforeAll(async () => {
+  assertTestDatabase(DATABASE);
   await startCluster();
   database = await connect(silent);
   repositories = createRepositories(database);
 });
 
 afterEach(async () => {
+  // A refused target or failed startup must never reach destructive cleanup.
+  if (database === undefined) return;
   await database.delete(jobRequiredSkills);
   await database.delete(jobs);
   await database.delete(candidates);
@@ -56,6 +61,19 @@ const aJob = {
   salaryRangeLpa: { min: 10, max: 18 },
   remoteAllowed: false,
 };
+
+it('connects to the reserved test database and cluster', async () => {
+  const result = await database.execute(`select current_database() as name,
+    current_setting('port') as port, current_setting('data_directory') as directory`);
+
+  expect(result.rows).toEqual([
+    {
+      name: TEST_DATABASE_ENV.PGDATABASE,
+      port: TEST_DATABASE_ENV.PGPORT,
+      directory: TEST_DATABASE_ENV.PGDATA_DIR,
+    },
+  ]);
+});
 
 describe('candidate repository', () => {
   it('returns the stored candidate with a server-minted id', async () => {
