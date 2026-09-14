@@ -53,3 +53,22 @@ export interface JobMatch {
   readonly score: number;
   readonly breakdown: readonly DimensionScore[];
 }
+
+/**
+ * The only logging surface the lower layers are given.
+ *
+ * Storage should not decide where a message goes — the server owns that. Passing this in
+ * keeps `db/` free of a logger dependency and lets a test assert on what was logged.
+ */
+export interface Logger {
+  error(message: string): void;
+}
+
+/**
+ * What a caller supplies when creating an entity.
+ *
+ * The id is not among the fields: the server mints it and returns it, so a client cannot
+ * collide with an existing record or choose an id that means something elsewhere.
+ */
+export type NewCandidate = Omit<Candidate, 'id'>;
+export type NewJob = Omit<Job, 'id'>;

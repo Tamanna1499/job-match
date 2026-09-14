@@ -17,5 +17,10 @@ export default tseslint.config(
       'prefer-const': 'error',
     },
   },
+  /** A command-line tool writes to the console by definition; the rule stands everywhere else. */
+  {
+    files: ['scripts/**/*.ts'],
+    rules: { 'no-console': 'off' },
+  },
   { ignores: ['dist/', 'node_modules/', 'coverage/', 'eslint.config.js'] },
 );

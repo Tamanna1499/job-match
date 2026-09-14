@@ -12,22 +12,30 @@
     "build": "tsc",
     "start": "node --env-file-if-exists=.env dist/server.js",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests",
+    "lint": "eslint src tests scripts",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
     "boundaries": "depcruise src --config .dependency-cruiser.cjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm run typecheck && npm run lint && npm run boundaries && npm test"
+    "verify": "npm run typecheck && npm run lint && npm run boundaries && npm test && npm run test:integration",
+    "db:generate": "drizzle-kit generate",
+    "db:console": "tsx scripts/db-console.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "embedded-postgres": "^18.4.0-beta.17",
     "fastify": "^5.12.4",
+    "pg": "^8.23.0",
     "zod": "^4.6.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.5.1",
+    "@types/pg": "^8.23.1",
     "@vitest/coverage-v8": "^4.1.11",
     "dependency-cruiser": "^17.4.3",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^10.10.0",
     "prettier": "^3.9.6",
     "tsx": "^4.23.13",

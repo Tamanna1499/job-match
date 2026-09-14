@@ -1,0 +1,198 @@
+{
+  "id": "961ffc1e-19f2-43aa-95ea-2f2bc76787eb",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.candidates": {
+      "name": "candidates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skills": {
+          "name": "skills",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "years_of_experience": {
+          "name": "years_of_experience",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expected_salary_lpa": {
+          "name": "expected_salary_lpa",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "candidates_experience_non_negative": {
+          "name": "candidates_experience_non_negative",
+          "value": "\"candidates\".\"years_of_experience\" >= 0"
+        },
+        "candidates_salary_positive": {
+          "name": "candidates_salary_positive",
+          "value": "\"candidates\".\"expected_salary_lpa\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.job_required_skills": {
+      "name": "job_required_skills",
+      "schema": "",
+      "columns": {
+        "job_id": {
+          "name": "job_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill": {
+          "name": "skill",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "must_have": {
+          "name": "must_have",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "job_required_skills_job_id_jobs_id_fk": {
+          "name": "job_required_skills_job_id_jobs_id_fk",
+          "tableFrom": "job_required_skills",
+          "tableTo": "jobs",
+          "columnsFrom": [
+            "job_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "job_required_skills_job_id_skill_pk": {
+          "name": "job_required_skills_job_id_skill_pk",
+          "columns": [
+            "job_id",
+            "skill"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.jobs": {
+      "name": "jobs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "min_years_experience": {
+          "name": "min_years_experience",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salary_min_lpa": {
+          "name": "salary_min_lpa",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salary_max_lpa": {
+          "name": "salary_max_lpa",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remote_allowed": {
+          "name": "remote_allowed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "jobs_experience_non_negative": {
+          "name": "jobs_experience_non_negative",
+          "value": "\"jobs\".\"min_years_experience\" >= 0"
+        },
+        "jobs_salary_positive": {
+          "name": "jobs_salary_positive",
+          "value": "\"jobs\".\"salary_min_lpa\" > 0"
+        },
+        "jobs_salary_range_ordered": {
+          "name": "jobs_salary_range_ordered",
+          "value": "\"jobs\".\"salary_max_lpa\" >= \"jobs\".\"salary_min_lpa\""
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
